@@ -56,7 +56,6 @@ Players are categorized into 4 core cricketing specializations, each with distin
 | **5. Polymorphism (Compile-time)** | Function and method overloading for flexible data access and searching. | `findPlayer(int id)` vs `findPlayer(const string& name)` |
 | **6. Composition & Aggregation** | `Team` aggregates a collection of `Player*`. `Match` aggregates two `Team*` references. `Tournament` is composed of `Team`s, `Match`es, and a `PointsTable`. | `std::vector<Player*> squad;`<br>`std::vector<Match> fixtures;` |
 | **7. Resource Management** | Virtual destructors in polymorphic hierarchies prevent memory leaks when deleting derived objects through base class pointers. | `virtual ~Player() {}` |
-| **8. File Handling** | Persistent storage using C++ `<fstream>` for loading rosters and writing auction summaries and tournament standings. | `ifstream inFile("players.txt");`<br>`ofstream outFile("auction_summary.txt");` |
 
 ---
 
@@ -64,42 +63,39 @@ Players are categorized into 4 core cricketing specializations, each with distin
 
 ```mermaid
 flowchart TD
-    subgraph Data_Layer ["📁 Data & Persistence Layer"]
-        F1["players.txt (Pre-registered Pool)"]
-        F2["teams.txt (Franchise Details)"]
-        F3["auction_summary.txt (Export Log)"]
-        F4["tournament_results.txt (Standings Log)"]
+    subgraph Data_Layer ["💾 In-Memory Data Store"]
+        F1["Categorized Player Pool<br>(Batsmen, Bowlers, AR, WK)"]
+        F2["Animal Franchise Purses<br>(Rs. 100 Cr each)"]
     end
 
     subgraph Core_Engine ["⚙️ Core Business Logic"]
-        PM["Player Management<br>(Factory & Registry)"]
+        PM["Player Management<br>(Inheritance Hierarchy)"]
         TM["Team Management<br>(Budget & Squad Composition)"]
-        AE["Auction Engine<br>(Bidding & Validation)"]
-        ME["Match Simulation Engine<br>(Innings & Ball-by-ball)"]
-        TE["Tournament Manager<br>(Fixtures & Points Table)"]
+        AE["Auction Engine<br>(Interactive & Fast Auto-Bidding)"]
+        ME["Match Simulation Engine<br>(Player Ratings & Scoring)"]
+        TE["Tournament Manager<br>(Round-Robin & Points Table)"]
     end
 
     subgraph Presentation_Layer ["🖥️ Terminal User Interface (CLI)"]
         UI["Interactive Console Dashboard"]
         Menu1["1. View Player Pool"]
         Menu2["2. View Franchises & Purse"]
-        Menu3["3. Live Interactive Auction"]
-        Menu4["4. View Team Squads"]
-        Menu5["5. Simulate Tournament"]
-        Menu6["6. Points Table & Champion"]
-        Menu7["7. Export / Save Data"]
+        Menu3["3. Search Player (ID/Name)"]
+        Menu4["4. Interactive Auction"]
+        Menu5["5. Fast Auto Auction"]
+        Menu6["6. View Team Squads"]
+        Menu7["7. Simulate Tournament & Final"]
+        Menu8["8. View Points Table"]
     end
 
     F1 --> PM
     F2 --> TM
     PM --> AE
     TM --> AE
-    AE --> F3
     AE --> TM
     TM --> TE
     TE --> ME
     ME --> TE
-    TE --> F4
 
     UI --> Menu1
     UI --> Menu2
@@ -108,14 +104,7 @@ flowchart TD
     UI --> Menu5
     UI --> Menu6
     UI --> Menu7
-
-    Menu1 -.-> PM
-    Menu2 -.-> TM
-    Menu3 -.-> AE
-    Menu4 -.-> TM
-    Menu5 -.-> TE
-    Menu6 -.-> TE
-    Menu7 -.-> F3
+    UI --> Menu8
 ```
 
 ---
@@ -335,54 +324,20 @@ flowchart LR
 
 ---
 
-## 📂 Modular Project Directory Structure
-
-To ensure clean code separation, easy compilation, and strict modularity, the project will be organized as follows:
+## 📂 Project Directory Structure
 
 ```
 IOOP project/
 │
-├── README.md                  # Complete architecture, diagrams & documentation
-├── Makefile                   # Multi-platform build file (g++ / clang++)
-│
-├── data/                      # Persistent storage / data files
-│   ├── players.txt            # Seed file containing categorized players & stats
-│   ├── teams.txt              # Seed file containing animal franchise details
-│   ├── auction_summary.txt    # Generated auction report
-│   └── tournament_results.txt # Generated tournament results & points table
-│
-├── include/                   # Header files (.h / .hpp)
-│   ├── Player.h               # Abstract base class: Player
-│   ├── Batsman.h              # Derived class: Batsman
-│   ├── Bowler.h               # Derived class: Bowler
-│   ├── AllRounder.h           # Derived class: AllRounder
-│   ├── WicketKeeper.h         # Derived class: WicketKeeper
-│   ├── Team.h                 # Franchise & Squad Management
-│   ├── AuctionSystem.h        # Auction engine & Bidding algorithms
-│   ├── Match.h                # Single match simulation logic
-│   ├── Tournament.h           # Tournament fixtures, points table & playoffs
-│   ├── FileManager.h          # File I/O utilities
-│   └── UIHelper.h             # Console styling, tables & color formatting
-│
-└── src/                       # Implementation files (.cpp)
-    ├── Player.cpp
-    ├── Batsman.cpp
-    ├── Bowler.cpp
-    ├── AllRounder.cpp
-    ├── WicketKeeper.cpp
-    ├── Team.cpp
-    ├── AuctionSystem.cpp
-    ├── Match.cpp
-    ├── Tournament.cpp
-    ├── FileManager.cpp
-    ├── UIHelper.cpp
-    └── main.cpp               # Interactive CLI entry point with switch-case menu
+├── README.md                  # Complete architecture, diagrams & viva documentation
+├── .gitignore                 # Ignores compiled binaries (*.exe, *.o)
+└── main.cpp                   # Clean, self-contained C++ implementation
 ```
 
-> **Note on Compilation**: A unified single-file compile or standard multi-file compile will be supported:
+> **Compilation Command**:
 > ```bash
-> g++ -std=c++17 src/*.cpp -Iinclude -o CricketAuctionSim
-> ./CricketAuctionSim
+> g++ main.cpp -o main.exe
+> .\main.exe
 > ```
 
 ---
@@ -391,17 +346,15 @@ IOOP project/
 
 ```mermaid
 flowchart TD
-    Step1["Phase 1: Player Hierarchy & Data Layer<br>• Define abstract Player class<br>• Implement Batsman, Bowler, AllRounder, WicketKeeper<br>• Implement Seed File Reader (players.txt)"]
+    Step1["Phase 1: Player Hierarchy<br>• Abstract Player class<br>• Batsman, Bowler, AllRounder, WicketKeeper<br>• Seed Initial Roster"]
     
-    Step2["Phase 2: Team & Squad Management<br>• Implement Team class with budget safety locks<br>• Implement Squad composition checks (min 1 Bat, 1 Bowl, 1 AR, 1 WK)<br>• Pretty-print squad rosters"]
+    Step2["Phase 2: Franchise & Squad Management<br>• Team class with budget safety locks<br>• Display squads and role counts<br>• Calculate overall team ratings"]
 
-    Step3["Phase 3: Player Auction Engine<br>• Interactive console bidding module<br>• Computer-controlled bidding AI based on budget & role needs<br>• Sold/Unsold mechanics and automated purse deductions"]
+    Step3["Phase 3: Player Auction Engine<br>• Interactive console bidding module<br>• Fast auto-bidding algorithm<br>• Sold/Unsold mechanics and budget deductions"]
 
-    Step4["Phase 4: Match & Tournament Simulation<br>• Algorithmic match engine using player performance ratings<br>• Round-Robin league fixture generator<br>• Dynamic Points Table with Net Run Rate (NRR) calculation<br>• Grand Finale & Award Ceremony"]
+    Step4["Phase 4: Match & Tournament Simulation<br>• Match engine using player performance ratings<br>• Round-Robin league fixtures<br>• Dynamic Points Table with Net Run Rate (NRR)<br>• Grand Finale & Award Ceremony"]
 
-    Step5["Phase 5: File Export & Final Polish<br>• Export auction results and tournament standings to .txt<br>• Add ASCII art, formatted tables, and menu navigation<br>• Comprehensive testing with GCC / Clang"]
-
-    Step1 --> Step2 --> Step3 --> Step4 --> Step5
+    Step1 --> Step2 --> Step3 --> Step4
 ```
 
 ---
