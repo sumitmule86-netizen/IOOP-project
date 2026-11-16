@@ -1,6 +1,6 @@
 /*
  * =====================================================================================
- *  PROJECT: Sports Tournament & Player Auction Management System (IPL-Style)
+ *  PROJECT: Sports Player Auction Management System (IPL-Style)
  *  LANGUAGE: C++ (Standard C++)
  *  
  *  HOW TO COMPILE & RUN:
@@ -26,14 +26,13 @@
  *  4. RUNTIME POLYMORPHISM (OVERRIDING):
  *     - Storing derived objects in 'vector<Player*> squad'.
  *     - Calling player->displayDetails() and player->calculateRating() calls the
- *       correct derived class method at runtime.
+ *       correct derived class method at runtime via V-Table.
  *
  *  5. COMPILE-TIME POLYMORPHISM (FUNCTION OVERLOADING):
  *     - Overloaded functions: findPlayer(pool, id) and findPlayer(pool, name).
  *
  *  6. COMPOSITION & AGGREGATION:
  *     - 'Team' contains a squad of Player pointers (vector<Player*>).
- *     - 'Tournament' manages Team references and match simulations.
  * =====================================================================================
  */
 
@@ -43,7 +42,6 @@
 #include <iomanip>
 #include <cstdlib>
 #include <ctime>
-#include <algorithm>
 
 using namespace std;
 
@@ -92,7 +90,7 @@ public:
         isSold = true;
     }
 
-    // Pure Virtual Functions (Abstraction)
+    // Pure Virtual Functions (Enforcing Abstraction)
     virtual void displayDetails() const = 0;
     virtual double calculateRating() const = 0;
 };
@@ -228,7 +226,7 @@ private:
     string mascot;
     double totalBudget;     // Rs. 100.0 Cr
     double remainingBudget; // Purse left
-    vector<Player*> squad;  // Aggregation: Team has players
+    vector<Player*> squad;  // Aggregation: Team has a squad of Players
 
 public:
     Team(int tId, string tName, string tMascot, double budget = 100.0) {
@@ -291,21 +289,12 @@ public:
              << " | All-Rounders: " << ar << " | Wicket-Keepers: " << wk << "]\n";
         cout << "==============================================================================\n";
     }
-
-    double getOverallTeamStrength() const {
-        if (squad.empty()) return 50.0;
-        double totalRating = 0.0;
-        for (size_t i = 0; i < squad.size(); i++) {
-            totalRating += squad[i]->calculateRating();
-        }
-        return totalRating / squad.size();
-    }
 };
 
 // =====================================================================================
 // 4. OOPS CONCEPT: FUNCTION OVERLOADING
 // =====================================================================================
-// Overload 1: Find by ID
+// Overload 1: Find player by ID
 Player* findPlayer(const vector<Player*>& pool, int id) {
     for (size_t i = 0; i < pool.size(); i++) {
         if (pool[i]->getId() == id) return pool[i];
@@ -313,7 +302,7 @@ Player* findPlayer(const vector<Player*>& pool, int id) {
     return nullptr;
 }
 
-// Overload 2: Find by Name
+// Overload 2: Find player by Name
 Player* findPlayer(const vector<Player*>& pool, string name) {
     for (size_t i = 0; i < pool.size(); i++) {
         if (pool[i]->getName() == name) return pool[i];
@@ -440,189 +429,7 @@ public:
 };
 
 // =====================================================================================
-// 6. TOURNAMENT & MATCH SIMULATION ENGINE
-// =====================================================================================
-struct TeamStanding {
-    string teamName;
-    int matchesPlayed;
-    int won;
-    int lost;
-    int points;
-    double netRunRate;
-
-    TeamStanding() {
-        teamName = "";
-        matchesPlayed = 0;
-        won = 0;
-        lost = 0;
-        points = 0;
-        netRunRate = 0.0;
-    }
-};
-
-class Tournament {
-private:
-    vector<Team>& teams;
-    vector<TeamStanding> standings;
-
-    void simulateMatch(Team& teamA, Team& teamB, int matchNo) {
-        cout << "\n------------------------------------------------------------------------------\n";
-        cout << " Match #" << matchNo << ": " << teamA.getName() << " vs " << teamB.getName() << "\n";
-        cout << " Format: 20 Overs T20\n";
-        cout << "------------------------------------------------------------------------------\n";
-
-        double strengthA = teamA.getOverallTeamStrength();
-        double strengthB = teamB.getOverallTeamStrength();
-
-        // Innings 1
-        int scoreA = 120 + (int)(strengthA * 0.8) + (rand() % 35);
-        int wicketsA = 3 + (rand() % 6);
-
-        // Innings 2
-        int scoreB = 115 + (int)(strengthB * 0.8) + (rand() % 35);
-        int wicketsB = 4 + (rand() % 6);
-
-        cout << " 1st Innings: " << teamA.getName() << " scored " << scoreA << "/" << wicketsA << " (20.0 ov)\n";
-        cout << " 2nd Innings: " << teamB.getName() << " scored " << scoreB << "/" << wicketsB << " (20.0 ov)\n";
-
-        int idxA = getStandingIndex(teamA.getName());
-        int idxB = getStandingIndex(teamB.getName());
-
-        standings[idxA].matchesPlayed++;
-        standings[idxB].matchesPlayed++;
-
-        double nrrDelta = (scoreA - scoreB) / 20.0;
-
-        if (scoreA > scoreB) {
-            cout << " Result: " << teamA.getName() << " won by " << (scoreA - scoreB) << " runs!\n";
-            standings[idxA].won++;
-            standings[idxA].points += 2;
-            standings[idxB].lost++;
-            standings[idxA].netRunRate += nrrDelta;
-            standings[idxB].netRunRate -= nrrDelta;
-        } else if (scoreB > scoreA) {
-            cout << " Result: " << teamB.getName() << " won by " << (10 - wicketsB) << " wickets!\n";
-            standings[idxB].won++;
-            standings[idxB].points += 2;
-            standings[idxA].lost++;
-            standings[idxB].netRunRate += (-nrrDelta);
-            standings[idxA].netRunRate -= (-nrrDelta);
-        } else {
-            cout << " Result: Match TIED! Points shared.\n";
-            standings[idxA].points += 1;
-            standings[idxB].points += 1;
-        }
-    }
-
-    int getStandingIndex(string tName) {
-        for (size_t i = 0; i < standings.size(); i++) {
-            if (standings[i].teamName == tName) return i;
-        }
-        return 0;
-    }
-
-public:
-    Tournament(vector<Team>& tList) : teams(tList) {
-        for (size_t i = 0; i < teams.size(); i++) {
-            TeamStanding ts;
-            ts.teamName = teams[i].getName();
-            standings.push_back(ts);
-        }
-    }
-
-    void runTournament() {
-        cout << "\n==============================================================================\n";
-        cout << "                   ANIMAL FRANCHISE PREMIER LEAGUE BEGINS                     \n";
-        cout << "==============================================================================\n";
-
-        for (size_t i = 0; i < standings.size(); i++) {
-            standings[i].matchesPlayed = 0;
-            standings[i].won = 0;
-            standings[i].lost = 0;
-            standings[i].points = 0;
-            standings[i].netRunRate = 0.0;
-        }
-
-        int matchCount = 1;
-        for (size_t i = 0; i < teams.size(); i++) {
-            for (size_t j = i + 1; j < teams.size(); j++) {
-                simulateMatch(teams[i], teams[j], matchCount++);
-            }
-        }
-
-        // Sort by Points
-        sort(standings.begin(), standings.end(), [](const TeamStanding& a, const TeamStanding& b) {
-            if (a.points != b.points) return a.points > b.points;
-            return a.netRunRate > b.netRunRate;
-        });
-
-        displayPointsTable();
-        playGrandFinal();
-    }
-
-    void displayPointsTable() const {
-        cout << "\n==============================================================================\n";
-        cout << "                         OFFICIAL POINTS TABLE                                \n";
-        cout << "==============================================================================\n";
-        cout << left << setw(4) << "Pos"
-             << setw(20) << "Team"
-             << setw(6) << "P"
-             << setw(6) << "W"
-             << setw(6) << "L"
-             << setw(8) << "Pts"
-             << setw(10) << "NRR" << "\n";
-        cout << "------------------------------------------------------------------------------\n";
-
-        for (size_t i = 0; i < standings.size(); i++) {
-            cout << left << setw(4) << (i + 1)
-                 << setw(20) << standings[i].teamName
-                 << setw(6) << standings[i].matchesPlayed
-                 << setw(6) << standings[i].won
-                 << setw(6) << standings[i].lost
-                 << setw(8) << standings[i].points
-                 << fixed << setprecision(3) << setw(10) << standings[i].netRunRate << "\n";
-        }
-        cout << "==============================================================================\n";
-    }
-
-    void playGrandFinal() {
-        if (standings.size() < 2) return;
-
-        cout << "\n******************************************************************************\n";
-        cout << "                      THE GRAND FINALE OF THE TOURNAMENT                      \n";
-        cout << "******************************************************************************\n";
-
-        string team1Name = standings[0].teamName;
-        string team2Name = standings[1].teamName;
-
-        Team* finalTeamA = nullptr;
-        Team* finalTeamB = nullptr;
-
-        for (size_t i = 0; i < teams.size(); i++) {
-            if (teams[i].getName() == team1Name) finalTeamA = &teams[i];
-            if (teams[i].getName() == team2Name) finalTeamB = &teams[i];
-        }
-
-        if (finalTeamA && finalTeamB) {
-            cout << " Finalists: " << finalTeamA->getName() << " vs " << finalTeamB->getName() << "\n\n";
-            int finalScoreA = 160 + (rand() % 40);
-            int finalScoreB = 158 + (rand() % 40);
-
-            cout << " " << finalTeamA->getName() << ": " << finalScoreA << "/6 (20.0 ov)\n";
-            cout << " " << finalTeamB->getName() << ": " << finalScoreB << "/7 (20.0 ov)\n\n";
-
-            if (finalScoreA >= finalScoreB) {
-                cout << " CHAMPIONS: " << finalTeamA->getName() << " lifts the Trophy! 🏆\n";
-            } else {
-                cout << " CHAMPIONS: " << finalTeamB->getName() << " lifts the Trophy! 🏆\n";
-            }
-        }
-        cout << "******************************************************************************\n";
-    }
-};
-
-// =====================================================================================
-// 7. DATA INITIALIZATION & CLEANUP
+// 6. DATA INITIALIZATION & CLEANUP
 // =====================================================================================
 void seedInitialData(vector<Player*>& pool, vector<Team>& teams) {
     // 4 Animal Franchises with Rs. 100.0 Cr budget each
@@ -664,7 +471,7 @@ void cleanUpMemory(vector<Player*>& pool) {
 }
 
 // =====================================================================================
-// 8. MAIN INTERACTIVE CONSOLE INTERFACE
+// 7. MAIN INTERACTIVE CONSOLE INTERFACE
 // =====================================================================================
 int main() {
     srand(time(0));
@@ -676,12 +483,11 @@ int main() {
     seedInitialData(playerPool, teams);
 
     AuctionSystem auction(playerPool, teams);
-    Tournament tournament(teams);
 
     int choice = -1;
     while (choice != 0) {
         cout << "\n==============================================================================\n";
-        cout << "       SPORTS TOURNAMENT & PLAYER AUCTION MANAGEMENT SYSTEM                   \n";
+        cout << "             SPORTS PLAYER AUCTION MANAGEMENT SYSTEM                          \n";
         cout << "==============================================================================\n";
         cout << " 1. View Registered Player Pool\n";
         cout << " 2. View Franchise Details & Remaining Budgets\n";
@@ -689,11 +495,9 @@ int main() {
         cout << " 4. Auction Next Unsold Player (Interactive Bidding)\n";
         cout << " 5. Run Fast Automated Auction for All Remaining Players\n";
         cout << " 6. View Team Squads & Role Composition\n";
-        cout << " 7. Simulate Full Tournament (Matches, Points Table & Grand Final)\n";
-        cout << " 8. View Tournament Points Table\n";
         cout << " 0. Exit System\n";
         cout << "==============================================================================\n";
-        cout << " Enter your choice (0-8): ";
+        cout << " Enter your choice (0-6): ";
         cin >> choice;
 
         switch (choice) {
@@ -748,7 +552,6 @@ int main() {
                     cout << "Enter Player First Name (e.g. Aarav, Shadow, Blaze, Dexter): ";
                     string pName;
                     cin >> pName;
-                    // Find player whose name starts with or equals pName
                     Player* found = nullptr;
                     for (size_t i = 0; i < playerPool.size(); i++) {
                         if (playerPool[i]->getName().find(pName) != string::npos) {
@@ -791,23 +594,13 @@ int main() {
                 break;
             }
 
-            case 7: {
-                tournament.runTournament();
-                break;
-            }
-
-            case 8: {
-                tournament.displayPointsTable();
-                break;
-            }
-
             case 0: {
-                cout << "\nExiting IPL Auction & Tournament Management System. Goodbye!\n";
+                cout << "\nExiting IPL Auction Management System. Goodbye!\n";
                 break;
             }
 
             default: {
-                cout << "\n[!] Invalid choice! Please select an option between 0 and 8.\n";
+                cout << "\n[!] Invalid choice! Please select an option between 0 and 6.\n";
                 break;
             }
         }

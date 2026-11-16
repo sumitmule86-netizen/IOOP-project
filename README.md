@@ -1,34 +1,22 @@
-<<<<<<< HEAD
-# IOOP Project
-
-This repository contains our Object Oriented Programming project.
-=======
-# 🏏 Sports Tournament & Player Auction Management System (IPL-Style)
-> **A Comprehensive, Object-Oriented Console Application in C++**
+# 🏏 Sports Player Auction Management System (IPL-Style)
+> **An Object-Oriented Console Application in C++**
 
 ---
 
-## 📌 Executive Summary
+## 📌 Project Overview
 
-The **Sports Tournament & Player Auction Management System** is a software application developed in modern, standard C++. Inspired by the Indian Premier League (IPL) mega-auction and tournament structure, it models a real-world sports franchise ecosystem. 
-
-The system operates across three primary phases:
-1. **Pre-Auction Setup**: Loading animal-themed franchises, fixed budgets, and categorized fictional player pools.
-2. **Interactive Live Auction**: Real-time bidding system with live budget deductions, role validation, and sold/unsold tracking.
-3. **Tournament & Match Simulation**: Round-robin league fixtures, simulated cricket matches calculated via player performance ratings, dynamic points table generation (Net Run Rate, Points), and championship playoffs.
+The **Sports Player Auction Management System** is an object-oriented software application inspired by the Indian Premier League (IPL) mega-auction mechanism. It models four animal-themed franchises, each initialized with a fixed purse of **Rs. 100 Crore**, competing to acquire specialized cricket players (Batsmen, Bowlers, All-Rounders, and Wicket-Keepers) through interactive bidding wars.
 
 ---
 
 ## 🦁 Animal-Themed Franchises & Budget Setup
 
-Each franchise is themed around animals, representing power, speed, agility, and dominance.
-
-| Franchise Name | Mascot / Icon | Initial Purse / Budget | Max Squad Size | Home Ground |
-| :--- | :---: | :---: | :---: | :---: |
-| **Roaring Lions** | 🦁 Lion | ₹100.00 Crore | 6 Players | Den Arena |
-| **Fierce Tigers** | 🐯 Tiger | ₹100.00 Crore | 6 Players | Bengal Fortress |
-| **Mighty Elephants** | 🐘 Elephant | ₹100.00 Crore | 6 Players | Tusker Colosseum |
-| **Swift Falcons** | 🦅 Falcon | ₹100.00 Crore | 6 Players | Falcon Nest |
+| Franchise Name | Mascot / Animal | Initial Purse / Budget | Max Squad Target |
+| :--- | :---: | :---: | :---: |
+| **Roaring Lions** | 🦁 Lion | Rs. 100.00 Crore | 5-6 Players |
+| **Fierce Tigers** | 🐯 Tiger | Rs. 100.00 Crore | 5-6 Players |
+| **Mighty Elephants** | 🐘 Elephant | Rs. 100.00 Crore | 5-6 Players |
+| **Swift Falcons** | 🦅 Falcon | Rs. 100.00 Crore | 5-6 Players |
 
 ---
 
@@ -37,10 +25,10 @@ Each franchise is themed around animals, representing power, speed, agility, and
 Players are categorized into 4 core cricketing specializations, each with distinct attributes and base prices:
 
 ```
-[Batsman]        Aarav "Blaster" Stone   | Base: ₹2.00 Cr | Runs: 4200, Strike Rate: 145.2, 100s: 4
-[Bowler]         Shadow "Yorker" Bolt    | Base: ₹1.50 Cr | Wickets: 110, Economy: 7.20, Bowling Avg: 21.4
-[All-Rounder]    Blaze "Dynamo" Rivera   | Base: ₹2.00 Cr | Runs: 2800, Wickets: 75, Bat SR: 138.0
-[Wicket-Keeper]  Dexter "Gloves" Fox     | Base: ₹1.00 Cr | Runs: 3100, Catches: 58, Stumpings: 18
+[Batsman]        Aarav Stone     | Base: Rs. 2.00 Cr | Runs: 3850, Strike Rate: 142.5, 100s: 4
+[Bowler]         Shadow Bolt     | Base: Rs. 2.00 Cr | Wickets: 95, Economy: 7.15
+[All-Rounder]    Blaze Rivera    | Base: Rs. 2.00 Cr | Runs: 2400, Wickets: 68, Bat SR: 141.0
+[Wicket-Keeper]  Dexter Fox      | Base: Rs. 1.50 Cr | Runs: 2750, Dismissals: 56
 ```
 
 ---
@@ -49,13 +37,13 @@ Players are categorized into 4 core cricketing specializations, each with distin
 
 | OOP Concept | Project Implementation Detail | Practical Code Example |
 | :--- | :--- | :--- |
-| **1. Abstraction** | An abstract base class `Player` hides complex calculations and enforces a uniform contract via pure virtual functions. | `virtual void displayDetails() const = 0;`<br>`virtual double calculateRating() const = 0;` |
-| **2. Encapsulation** | Strict data hiding. Data members (`remainingBudget`, `basePrice`, `soldPrice`, `squad`) are `private`/`protected`. Mutated strictly via validated setters. | `bool Team::deductBudget(double amount)` ensures a team cannot spend more than their remaining purse. |
+| **1. Abstraction** | An abstract base class `Player` enforces a uniform contract via pure virtual functions (`= 0`). | `virtual void displayDetails() const = 0;`<br>`virtual double calculateRating() const = 0;` |
+| **2. Encapsulation** | Sensitive data (`remainingBudget`, `soldPrice`, `squad`) is `private`/`protected`. Mutated strictly via validated methods. | `bool Team::deductBudget(double amount)` prevents overspending. |
 | **3. Inheritance** | `Player` is the generalized base class. Specialized subclasses (`Batsman`, `Bowler`, `AllRounder`, `WicketKeeper`) inherit common properties and introduce role-specific attributes. | `class Batsman : public Player`<br>`class Bowler : public Player` |
-| **4. Polymorphism (Runtime)** | Overriding base class methods in derived classes. Manipulating derived player instances through a collection of base pointers `vector<Player*>`. | `player->displayDetails();`<br>`player->calculateRating();` (Dynamic dispatch via V-Table) |
-| **5. Polymorphism (Compile-time)** | Function and method overloading for flexible data access and searching. | `findPlayer(int id)` vs `findPlayer(const string& name)` |
-| **6. Composition & Aggregation** | `Team` aggregates a collection of `Player*`. `Match` aggregates two `Team*` references. `Tournament` is composed of `Team`s, `Match`es, and a `PointsTable`. | `std::vector<Player*> squad;`<br>`std::vector<Match> fixtures;` |
-| **7. Resource Management** | Virtual destructors in polymorphic hierarchies prevent memory leaks when deleting derived objects through base class pointers. | `virtual ~Player() {}` |
+| **4. Polymorphism (Runtime)** | Overriding base class methods in derived classes. Storing derived objects in base pointers `vector<Player*> squad`. | `player->displayDetails();`<br>`player->calculateRating();` (Dynamic dispatch via V-Table) |
+| **5. Polymorphism (Compile-time)** | Function overloading for player searches by ID or Name. | `findPlayer(pool, int id)` vs `findPlayer(pool, string name)` |
+| **6. Composition & Aggregation** | `Team` aggregates a collection of `Player*` pointers. | `std::vector<Player*> squad;` |
+| **7. Resource Management** | Virtual destructor in `Player` guarantees clean polymorphic object deletion. | `virtual ~Player() {}` |
 
 ---
 
@@ -64,16 +52,14 @@ Players are categorized into 4 core cricketing specializations, each with distin
 ```mermaid
 flowchart TD
     subgraph Data_Layer ["💾 In-Memory Data Store"]
-        F1["Categorized Player Pool<br>(Batsmen, Bowlers, AR, WK)"]
-        F2["Animal Franchise Purses<br>(Rs. 100 Cr each)"]
+        P1["Categorized Player Pool<br>(Batsmen, Bowlers, AR, WK)"]
+        T1["Animal Franchise Purses<br>(Rs. 100 Cr each)"]
     end
 
     subgraph Core_Engine ["⚙️ Core Business Logic"]
         PM["Player Management<br>(Inheritance Hierarchy)"]
         TM["Team Management<br>(Budget & Squad Composition)"]
         AE["Auction Engine<br>(Interactive & Fast Auto-Bidding)"]
-        ME["Match Simulation Engine<br>(Player Ratings & Scoring)"]
-        TE["Tournament Manager<br>(Round-Robin & Points Table)"]
     end
 
     subgraph Presentation_Layer ["🖥️ Terminal User Interface (CLI)"]
@@ -81,21 +67,17 @@ flowchart TD
         Menu1["1. View Player Pool"]
         Menu2["2. View Franchises & Purse"]
         Menu3["3. Search Player (ID/Name)"]
-        Menu4["4. Interactive Auction"]
-        Menu5["5. Fast Auto Auction"]
+        Menu4["4. Auction Next Unsold Player"]
+        Menu5["5. Fast Automated Auction"]
         Menu6["6. View Team Squads"]
-        Menu7["7. Simulate Tournament & Final"]
-        Menu8["8. View Points Table"]
+        Menu0["0. Exit System"]
     end
 
-    F1 --> PM
-    F2 --> TM
+    P1 --> PM
+    T1 --> TM
     PM --> AE
     TM --> AE
     AE --> TM
-    TM --> TE
-    TE --> ME
-    ME --> TE
 
     UI --> Menu1
     UI --> Menu2
@@ -103,8 +85,7 @@ flowchart TD
     UI --> Menu4
     UI --> Menu5
     UI --> Menu6
-    UI --> Menu7
-    UI --> Menu8
+    UI --> Menu0
 ```
 
 ---
@@ -123,7 +104,7 @@ classDiagram
         #double basePrice
         #double soldPrice
         #bool isSold
-        #string currentTeam
+        #string teamName
         +Player(int, string, string, double)
         +virtual ~Player()
         +virtual void displayDetails() const*
@@ -134,47 +115,39 @@ classDiagram
         +double getBasePrice() const
         +double getSoldPrice() const
         +bool getIsSold() const
-        +void markSold(string teamName, double price)
+        +string getTeamName() const
+        +void assignToTeam(string, double)
     }
 
     class Batsman {
-        -int totalRuns
-        -int centuries
+        -int runs
         -double strikeRate
-        +Batsman(...)
-        +void displayDetails() const
-        +double calculateRating() const
-        +int getRuns() const
+        -int centuries
+        +displayDetails() const
+        +calculateRating() const
     }
 
     class Bowler {
         -int wickets
-        -double economyRate
-        -double bowlingAverage
-        +Bowler(...)
-        +void displayDetails() const
-        +double calculateRating() const
-        +int getWickets() const
+        -double economy
+        +displayDetails() const
+        +calculateRating() const
     }
 
     class AllRounder {
         -int runs
         -int wickets
         -double strikeRate
-        -double economyRate
-        +AllRounder(...)
-        +void displayDetails() const
-        +double calculateRating() const
+        -double economy
+        +displayDetails() const
+        +calculateRating() const
     }
 
     class WicketKeeper {
         -int runs
-        -int catches
-        -int stumpings
-        -double strikeRate
-        +WicketKeeper(...)
-        +void displayDetails() const
-        +double calculateRating() const
+        -int dismissals
+        +displayDetails() const
+        +calculateRating() const
     }
 
     Player <|-- Batsman : Inheritance
@@ -183,68 +156,35 @@ classDiagram
     Player <|-- WicketKeeper : Inheritance
 
     class Team {
-        -int teamId
+        -int id
         -string name
         -string mascot
-        -double totalPurse
-        -double remainingPurse
+        -double totalBudget
+        -double remainingBudget
         -vector~Player*~ squad
         +Team(int, string, string, double)
-        +bool canAfford(double amount) const
-        +bool deductBudget(double amount)
-        +bool addPlayer(Player* player)
+        +bool canAfford(double) const
+        +bool deductBudget(double)
+        +void addPlayer(Player*)
         +void displaySquad() const
-        +void displayComposition() const
-        +double getRemainingPurse() const
+        +double getRemainingBudget() const
         +string getName() const
         +vector~Player*~ getSquad() const
     }
 
     Team o-- Player : Aggregates (Squad)
 
-    class Match {
-        -Team* teamA
-        -Team* teamB
-        -int scoreA
-        -int wicketsA
-        -int scoreB
-        -int wicketsB
-        -Team* winner
-        -string matchDetails
-        +Match(Team*, Team*)
-        +void simulateMatch()
-        +void displayResult() const
-        +Team* getWinner() const
-    }
-
-    Match --> Team : References Team A & B
-
-    class Tournament {
-        -vector~Team*~ teams
-        -vector~Match~ matches
-        -map~string, TeamStats~ standings
-        +Tournament(vector~Team*~)
-        +void generateRoundRobinFixtures()
-        +void runAllMatches()
-        +void updateStandings(Match& match)
-        +void displayPointsTable() const
-        +void declareChampion() const
-    }
-
-    Tournament *-- Match : Composes Fixtures
-    Tournament o-- Team : References Franchises
-
     class AuctionSystem {
         -vector~Player*~ playerPool
         -vector~Team*~ teams
         +AuctionSystem(vector~Player*~, vector~Team*~)
-        +void conductAuction()
-        +void bidForPlayer(Player* player)
-        +void displayAuctionSummary() const
+        +Player* getNextUnsoldPlayer()
+        +void auctionSinglePlayer(Player*, bool)
+        +void runFullAuction(bool)
     }
 
     AuctionSystem o-- Player : Manages Pool
-    AuctionSystem o-- Team : Manages Bidders
+    AuctionSystem o-- Team : Manages Franchises
 ```
 
 ---
@@ -253,73 +193,37 @@ classDiagram
 
 ```mermaid
 stateDiagram-v2
-    [*] --> SelectPlayer : Pick next player from Pool
-    
-    state SelectPlayer {
-        [*] --> AnnounceDetails
-        AnnounceDetails --> DisplayBasePrice
-    }
-
-    SelectPlayer --> BiddingRound : Open Bidding
+    [*] --> SelectPlayer : Next Player from Pool
+    SelectPlayer --> BiddingRound : Announce Player & Base Price
     
     state BiddingRound {
-        [*] --> AwaitBid : Start at Base Price
-        AwaitBid --> ValidateBid : Team places higher bid
-        ValidateBid --> CheckPurse : Has enough budget?
-        
-        CheckPurse --> AcceptBid : Yes (Purse >= Bid)
-        CheckPurse --> RejectBid : No (Insufficient Purse)
+        [*] --> AwaitBid
+        AwaitBid --> ValidateBid : Franchise places increment bid
+        ValidateBid --> CheckPurse : Sufficient purse?
+        CheckPurse --> AcceptBid : Yes
+        CheckPurse --> RejectBid : No (Budget exceeded)
         RejectBid --> AwaitBid
-        
-        AcceptBid --> NewHighestBidder : Update Top Bid & Team
-        NewHighestBidder --> AwaitBid : Other teams counter-bid?
+        AcceptBid --> NewHighestBidder : Update Top Bidder
+        NewHighestBidder --> AwaitBid : Counter-bids?
     }
 
-    BiddingRound --> EvaluateOutcome : No further bids placed
+    BiddingRound --> EvaluateOutcome : Hammer falls (Choice = 0)
+    EvaluateOutcome --> MarkSold : Bid >= Base Price
+    EvaluateOutcome --> MarkUnsold : No bids placed
 
-    state EvaluateOutcome {
-        [*] --> CheckIfBidded
-        CheckIfBidded --> MarkSold : At least 1 valid bid received
-        CheckIfBidded --> MarkUnsold : Zero bids placed
-    }
-
-    MarkSold --> DeductBudget : Deduct winning bid from winning Team purse
-    DeductBudget --> AddToSquad : Add Player pointer to Team's squad list
+    MarkSold --> DeductBudget : Deduct winning amount from purse
+    DeductBudget --> AddToSquad : Assign player to franchise
     AddToSquad --> NextPlayerCheck
 
-    MarkUnsold --> NextPlayerCheck : Retain in unsold bucket
+    MarkUnsold --> NextPlayerCheck : Retain in unsold pool
 
     state NextPlayerCheck {
-        [*] --> MorePlayers : Pool not empty
-        [*] --> AuctionFinished : Pool exhausted
+        [*] --> MorePlayers : Pool active
+        [*] --> AuctionFinished : Pool completed
     }
 
     MorePlayers --> SelectPlayer
     AuctionFinished --> [*]
-```
-
----
-
-## 🏆 Match & Tournament Simulation Pipeline
-
-```mermaid
-flowchart LR
-    A["Franchise Squads Finalized"] --> B["Generate Fixtures<br>(Round-Robin Format)"]
-    
-    subgraph Match_Engine ["Match Simulation Algorithm"]
-        B --> C["Compute Team A<br>Batting & Bowling Power"]
-        B --> D["Compute Team B<br>Batting & Bowling Power"]
-        C & D --> E["Simulate Innings 1<br>(Runs, Wickets, Overs)"]
-        E --> F["Simulate Innings 2<br>(Target Chase, Pressure Factor)"]
-        F --> G["Determine Winner<br>& Margin of Victory"]
-    end
-
-    G --> H["Update Points Table<br>(Points +2, Net Run Rate)"]
-    H --> I{"More Fixtures?"}
-    I -- Yes --> B
-    I -- No --> J["Top 2 Teams Final"]
-    J --> K["Simulate Grand Finale"]
-    K --> L["Crown Champion 🏆"]
 ```
 
 ---
@@ -334,53 +238,36 @@ IOOP project/
 └── main.cpp                   # Clean, self-contained C++ implementation
 ```
 
-> **Compilation Command**:
-> ```bash
-> g++ main.cpp -o main.exe
-> .\main.exe
-> ```
-
 ---
 
-## 🗺️ Step-by-Step Implementation Roadmap
+## 🚀 How to Compile & Run
 
-```mermaid
-flowchart TD
-    Step1["Phase 1: Player Hierarchy<br>• Abstract Player class<br>• Batsman, Bowler, AllRounder, WicketKeeper<br>• Seed Initial Roster"]
-    
-    Step2["Phase 2: Franchise & Squad Management<br>• Team class with budget safety locks<br>• Display squads and role counts<br>• Calculate overall team ratings"]
+```bash
+# Compile using any standard C++ compiler
+g++ main.cpp -o main.exe
 
-    Step3["Phase 3: Player Auction Engine<br>• Interactive console bidding module<br>• Fast auto-bidding algorithm<br>• Sold/Unsold mechanics and budget deductions"]
-
-    Step4["Phase 4: Match & Tournament Simulation<br>• Match engine using player performance ratings<br>• Round-Robin league fixtures<br>• Dynamic Points Table with Net Run Rate (NRR)<br>• Grand Finale & Award Ceremony"]
-
-    Step1 --> Step2 --> Step3 --> Step4
+# Run the executable
+.\main.exe
 ```
 
 ---
 
 ## 🎓 Viva Questions & Answers Cheat-Sheet
 
-Here are typical viva questions examiners ask for this exact system and how our design answers them:
-
 1. **Q: Why is `Player` an abstract class?**
-   - **A**: A real-world cricketer is never just a generic "Player" without a specific role. `Player` defines pure virtual functions (`displayDetails() = 0` and `calculateRating() = 0`), which forces derived classes (`Batsman`, `Bowler`, etc.) to provide role-specific implementations. It also prevents accidental instantiation of a generic player object.
+   - **A**: A player in cricket always plays a specialized role (Batsman, Bowler, etc.). Declaring pure virtual functions (`displayDetails() = 0` and `calculateRating() = 0`) turns `Player` into an abstract class, preventing accidental instantiation and ensuring each role provides its specific implementation.
 
 2. **Q: Where is runtime polymorphism demonstrated?**
-   - **A**: The `Team` stores players as a collection of base pointers `std::vector<Player*> squad`. When we loop through the squad and invoke `player->displayDetails()`, C++ uses the V-Table pointer (`vptr`) to resolve and execute the appropriate derived class function at runtime.
+   - **A**: `Team` stores players as a collection of base pointers: `std::vector<Player*> squad`. When we loop over `squad` and call `squad[i]->displayDetails()`, C++ uses the V-Table pointer (`vptr`) to dynamically invoke the derived class method at runtime.
 
-3. **Q: Why is the destructor in `Player` marked `virtual`?**
-   - **A**: When a derived object (e.g. `Batsman`) is deleted via a base class pointer (`Player*`), a non-virtual destructor would result in undefined behavior and memory leaks because only the base destructor would be invoked. A `virtual ~Player()` guarantees the complete destructor chain is called.
+3. **Q: Why does `Player` have a virtual destructor?**
+   - **A**: When deleting derived objects via base class pointers (`delete player;`), a virtual destructor guarantees the complete destructor chain is called, avoiding memory leaks.
 
-4. **Q: How does the system enforce Encapsulation?**
-   - **A**: Critical financial data such as `remainingPurse` cannot be directly modified from outside the `Team` class. It can only be reduced via `deductBudget(amount)`, which includes rigorous validation to ensure the bid does not exceed the available purse or break minimum squad requirements.
+4. **Q: How does the system demonstrate Encapsulation?**
+   - **A**: Critical team data (`remainingBudget`, `squad`) is `private`. The purse can only be reduced through `deductBudget()`, which checks `canAfford()` to prevent overspending.
 
-5. **Q: How does the match simulation work?**
-   - **A**: Each player computes a normalized rating via `calculateRating()`. The match simulator computes the aggregate batting strength and bowling strength of both playing elevens, incorporating simulated pitch conditions and controlled random variance to realistically model cricket scores.
-
----
-
-## 🚦 Ready for Your Approval!
-
-Once you review and approve this architecture, roadmap, and design, we will proceed immediately with the clean, robust C++ implementation!
->>>>>>> ed85d8a (This is readme update pls check it and give approval)
+5. **Q: Where is function overloading used?**
+   - **A**: We overloaded `findPlayer`:
+     - `Player* findPlayer(const vector<Player*>& pool, int id);`
+     - `Player* findPlayer(const vector<Player*>& pool, string name);`
+     Both share the same function name but take different argument types.
