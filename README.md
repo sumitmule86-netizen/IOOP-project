@@ -59,7 +59,7 @@ flowchart TD
     subgraph Core_Engine ["⚙️ Core Business Logic"]
         PM["Player Management<br>(Inheritance Hierarchy)"]
         TM["Team Management<br>(Budget & Squad Composition)"]
-        AE["Auction Engine<br>(Interactive & Fast Auto-Bidding)"]
+        AE["Auction Engine<br>(Live Interactive Bidding)"]
     end
 
     subgraph Presentation_Layer ["🖥️ Terminal User Interface (CLI)"]
@@ -67,9 +67,8 @@ flowchart TD
         Menu1["1. View Player Pool"]
         Menu2["2. View Franchises & Purse"]
         Menu3["3. Search Player (ID/Name)"]
-        Menu4["4. Auction Next Unsold Player"]
-        Menu5["5. Fast Automated Auction"]
-        Menu6["6. View Team Squads"]
+        Menu4["4. Conduct Auction for Next Player"]
+        Menu5["5. View Team Squads"]
         Menu0["0. Exit System"]
     end
 
@@ -84,7 +83,6 @@ flowchart TD
     UI --> Menu3
     UI --> Menu4
     UI --> Menu5
-    UI --> Menu6
     UI --> Menu0
 ```
 
@@ -179,8 +177,7 @@ classDiagram
         -vector~Team*~ teams
         +AuctionSystem(vector~Player*~, vector~Team*~)
         +Player* getNextUnsoldPlayer()
-        +void auctionSinglePlayer(Player*, bool)
-        +void runFullAuction(bool)
+        +void auctionPlayer(Player*)
     }
 
     AuctionSystem o-- Player : Manages Pool

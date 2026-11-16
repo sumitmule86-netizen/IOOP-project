@@ -26,7 +26,7 @@
  *  4. RUNTIME POLYMORPHISM (OVERRIDING):
  *     - Storing derived objects in 'vector<Player*> squad'.
  *     - Calling player->displayDetails() and player->calculateRating() calls the
- *       correct derived class method at runtime via V-Table.
+ *       correct derived class method at runtime via the V-Table.
  *
  *  5. COMPILE-TIME POLYMORPHISM (FUNCTION OVERLOADING):
  *     - Overloaded functions: findPlayer(pool, id) and findPlayer(pool, name).
@@ -40,8 +40,6 @@
 #include <vector>
 #include <string>
 #include <iomanip>
-#include <cstdlib>
-#include <ctime>
 
 using namespace std;
 
@@ -322,6 +320,7 @@ public:
     AuctionSystem(vector<Player*>& pool, vector<Team>& tList)
         : playerPool(pool), teams(tList) {}
 
+    // Find the next unsold player in the pool
     Player* getNextUnsoldPlayer() {
         for (size_t i = 0; i < playerPool.size(); i++) {
             if (!playerPool[i]->getIsSold()) return playerPool[i];
@@ -329,9 +328,10 @@ public:
         return nullptr;
     }
 
-    void auctionSinglePlayer(Player* p, bool autoMode = false) {
+    // Conduct bidding round for a player
+    void auctionPlayer(Player* p) {
         if (p == nullptr) {
-            cout << "\n[!] No unsold player found!\n";
+            cout << "\n[!] No unsold player found in the pool!\n";
             return;
         }
 
@@ -341,62 +341,40 @@ public:
         cout << "\n------------------------------------------------------------------------------\n";
 
         double currentBid = p->getBasePrice();
-        int highestBidderIndex = -1;
+        int highestBidderIndex = -1; // -1 means no team has placed a bid yet
 
-        if (!autoMode) {
-            // Interactive Bidding
-            int choice = -1;
-            while (choice != 0) {
-                cout << "\nCurrent Highest Bid: Rs. " << fixed << setprecision(2) << currentBid << " Cr";
-                if (highestBidderIndex != -1) {
-                    cout << " by " << teams[highestBidderIndex].getName();
-                } else {
-                    cout << " (Base Price)";
-                }
-                cout << "\n";
-
-                cout << "Select Franchise to raise bid (+Rs. 0.25 Cr):\n";
-                for (size_t i = 0; i < teams.size(); i++) {
-                    cout << "  " << (i + 1) << ". " << teams[i].getName()
-                         << " (Purse: Rs. " << teams[i].getRemainingBudget() << " Cr)\n";
-                }
-                cout << "  0. Sell to current highest bidder / Pass\n";
-                cout << "Enter choice: ";
-                cin >> choice;
-
-                if (choice >= 1 && choice <= (int)teams.size()) {
-                    int teamIdx = choice - 1;
-                    double nextBid = (highestBidderIndex == -1) ? currentBid : (currentBid + 0.25);
-
-                    if (teams[teamIdx].canAfford(nextBid)) {
-                        currentBid = nextBid;
-                        highestBidderIndex = teamIdx;
-                        cout << ">> " << teams[teamIdx].getName() << " placed bid of Rs. " << currentBid << " Cr!\n";
-                    } else {
-                        cout << "[X] Insufficient funds in " << teams[teamIdx].getName() << "'s purse!\n";
-                    }
-                } else if (choice != 0) {
-                    cout << "[!] Invalid choice!\n";
-                }
+        int choice = -1;
+        while (choice != 0) {
+            cout << "\nCurrent Highest Bid: Rs. " << fixed << setprecision(2) << currentBid << " Cr";
+            if (highestBidderIndex != -1) {
+                cout << " by " << teams[highestBidderIndex].getName();
+            } else {
+                cout << " (Base Price)";
             }
-        } else {
-            // Fast Auto-Bidding
-            vector<int> interestedTeams;
+            cout << "\n";
+
+            cout << "Select Franchise to place/raise bid (+Rs. 0.25 Cr):\n";
             for (size_t i = 0; i < teams.size(); i++) {
-                if (teams[i].canAfford(p->getBasePrice() + 1.0) && teams[i].getSquadSize() < 5) {
-                    interestedTeams.push_back(i);
-                }
+                cout << "  " << (i + 1) << ". " << teams[i].getName()
+                     << " (Purse: Rs. " << teams[i].getRemainingBudget() << " Cr)\n";
             }
+            cout << "  0. Sell to current highest bidder / Pass\n";
+            cout << "Enter choice: ";
+            cin >> choice;
 
-            if (!interestedTeams.empty()) {
-                int winner = interestedTeams[rand() % interestedTeams.size()];
-                double randomHike = (rand() % 5) * 0.50; // 0.0 to 2.0 Cr hike
-                double finalBid = p->getBasePrice() + randomHike;
+            if (choice >= 1 && choice <= (int)teams.size()) {
+                int teamIdx = choice - 1;
+                double nextBid = (highestBidderIndex == -1) ? currentBid : (currentBid + 0.25);
 
-                if (teams[winner].canAfford(finalBid)) {
-                    currentBid = finalBid;
-                    highestBidderIndex = winner;
+                if (teams[teamIdx].canAfford(nextBid)) {
+                    currentBid = nextBid;
+                    highestBidderIndex = teamIdx;
+                    cout << ">> " << teams[teamIdx].getName() << " placed bid of Rs. " << currentBid << " Cr!\n";
+                } else {
+                    cout << "[X] Insufficient funds in " << teams[teamIdx].getName() << "'s purse!\n";
                 }
+            } else if (choice != 0) {
+                cout << "[!] Invalid choice!\n";
             }
         }
 
@@ -406,25 +384,11 @@ public:
             winner.deductBudget(currentBid);
             p->assignToTeam(winner.getName(), currentBid);
             winner.addPlayer(p);
-            cout << "\nSOLD! " << p->getName() << " is SOLD to "
+            cout << "\n🔨 SOLD! " << p->getName() << " is SOLD to "
                  << winner.getName() << " for Rs. " << fixed << setprecision(2) << currentBid << " Cr!\n";
         } else {
-            cout << "\nUNSOLD! No valid bids received for " << p->getName() << ".\n";
+            cout << "\n❌ UNSOLD! No franchise placed a bid for " << p->getName() << ".\n";
         }
-    }
-
-    void runFullAuction(bool autoMode) {
-        cout << "\n==============================================================================\n";
-        cout << "                  IPL MEGA-AUCTION SESSION COMMENCING                         \n";
-        cout << "==============================================================================\n";
-
-        for (size_t i = 0; i < playerPool.size(); i++) {
-            if (!playerPool[i]->getIsSold()) {
-                auctionSinglePlayer(playerPool[i], autoMode);
-            }
-        }
-
-        cout << "\n[✓] Auction session completed for all registered players!\n";
     }
 };
 
@@ -474,8 +438,6 @@ void cleanUpMemory(vector<Player*>& pool) {
 // 7. MAIN INTERACTIVE CONSOLE INTERFACE
 // =====================================================================================
 int main() {
-    srand(time(0));
-
     vector<Player*> playerPool;
     vector<Team> teams;
 
@@ -492,12 +454,11 @@ int main() {
         cout << " 1. View Registered Player Pool\n";
         cout << " 2. View Franchise Details & Remaining Budgets\n";
         cout << " 3. Search Player by ID or Name\n";
-        cout << " 4. Auction Next Unsold Player (Interactive Bidding)\n";
-        cout << " 5. Run Fast Automated Auction for All Remaining Players\n";
-        cout << " 6. View Team Squads & Role Composition\n";
+        cout << " 4. Conduct Auction for Next Unsold Player\n";
+        cout << " 5. View Team Squads & Role Composition\n";
         cout << " 0. Exit System\n";
         cout << "==============================================================================\n";
-        cout << " Enter your choice (0-6): ";
+        cout << " Enter your choice (0-5): ";
         cin >> choice;
 
         switch (choice) {
@@ -575,7 +536,7 @@ int main() {
             case 4: {
                 Player* nextPlayer = auction.getNextUnsoldPlayer();
                 if (nextPlayer != nullptr) {
-                    auction.auctionSinglePlayer(nextPlayer, false);
+                    auction.auctionPlayer(nextPlayer);
                 } else {
                     cout << "\n[✓] All players in the auction pool are already SOLD!\n";
                 }
@@ -583,11 +544,6 @@ int main() {
             }
 
             case 5: {
-                auction.runFullAuction(true);
-                break;
-            }
-
-            case 6: {
                 for (size_t i = 0; i < teams.size(); i++) {
                     teams[i].displaySquad();
                 }
@@ -600,7 +556,7 @@ int main() {
             }
 
             default: {
-                cout << "\n[!] Invalid choice! Please select an option between 0 and 6.\n";
+                cout << "\n[!] Invalid choice! Please select an option between 0 and 5.\n";
                 break;
             }
         }
