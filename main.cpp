@@ -1,64 +1,32 @@
 /*
- * =====================================================================================
- *  PROJECT: Sports Player Auction Management System (IPL-Style)
- *  LANGUAGE: C++ (Standard C++)
- *  
- *  HOW TO COMPILE & RUN:
- *      g++ main.cpp -o main.exe
- *      .\main.exe
- *
- *  -----------------------------------------------------------------------------------
- *  QUICK REFERENCE GUIDE FOR VIVA / LAB EVALUATION:
- *  -----------------------------------------------------------------------------------
- *  1. ABSTRACTION:
- *     - Abstract base class 'Player' has pure virtual functions:
- *       virtual void displayDetails() const = 0;
- *       virtual double calculateRating() const = 0;
- *
- *  2. INHERITANCE:
- *     - Subclasses inherit from Player:
- *       Batsman, Bowler, AllRounder, WicketKeeper.
- *
- *  3. ENCAPSULATION:
- *     - Data members in 'Team' and 'Player' are private/protected.
- *     - Purse is safely deducted using deductBudget(amount).
- *
- *  4. RUNTIME POLYMORPHISM (OVERRIDING):
- *     - Storing derived objects in 'vector<Player*> squad'.
- *     - Calling player->displayDetails() and player->calculateRating() calls the
- *       correct derived class method at runtime via the V-Table.
- *
- *  5. COMPILE-TIME POLYMORPHISM (FUNCTION OVERLOADING):
- *     - Overloaded functions: findPlayer(pool, id) and findPlayer(pool, name).
- *
- *  6. COMPOSITION & AGGREGATION:
- *     - 'Team' contains a squad of Player pointers (vector<Player*>).
- * =====================================================================================
+ * Sports Player Auction Management System (IPL-Style)
+ * 
+ * OOPS Concepts Implemented:
+ * 1. Abstraction: Abstract base class 'Player' with pure virtual functions.
+ * 2. Inheritance: Batsman, Bowler, AllRounder, WicketKeeper derived from Player.
+ * 3. Encapsulation: Private/protected variables with getters and budget protection.
+ * 4. Polymorphism: Virtual functions (overriding) and function overloading.
+ * 5. Aggregation: Team class holds a list of Player pointers.
  */
 
 #include <iostream>
 #include <vector>
 #include <string>
-#include <iomanip>
 
 using namespace std;
 
-// =====================================================================================
-// 1. OOPS CONCEPT: ABSTRACTION & BASE CLASS
-// =====================================================================================
-// 'Player' is an abstract base class with pure virtual functions (= 0).
+// Base Abstract Class
 class Player {
 protected:
     int id;
     string name;
     string role;
-    double basePrice;   // in Crores (e.g., 2.0 = Rs. 2.00 Cr)
+    double basePrice;
     double soldPrice;
     bool isSold;
     string teamName;
 
 public:
-    // Parameterized Constructor
     Player(int pId, string pName, string pRole, double bPrice) {
         id = pId;
         name = pName;
@@ -69,10 +37,8 @@ public:
         teamName = "None";
     }
 
-    // Virtual Destructor
     virtual ~Player() {}
 
-    // Getters (Encapsulation)
     int getId() const { return id; }
     string getName() const { return name; }
     string getRole() const { return role; }
@@ -81,21 +47,16 @@ public:
     bool getIsSold() const { return isSold; }
     string getTeamName() const { return teamName; }
 
-    // Assign player to winning franchise
     void assignToTeam(string tName, double price) {
         teamName = tName;
         soldPrice = price;
         isSold = true;
     }
 
-    // Pure Virtual Functions (Enforcing Abstraction)
+    // Pure virtual functions (Abstraction)
     virtual void displayDetails() const = 0;
     virtual double calculateRating() const = 0;
 };
-
-// =====================================================================================
-// 2. OOPS CONCEPT: INHERITANCE & POLYMORPHISM (DERIVED CLASSES)
-// =====================================================================================
 
 // Derived Class 1: Batsman
 class Batsman : public Player {
@@ -112,15 +73,9 @@ public:
         centuries = cent;
     }
 
-    // Function Overriding
     void displayDetails() const override {
-        cout << left << setw(4) << id
-             << setw(18) << name
-             << setw(15) << role
-             << "Rs. " << fixed << setprecision(2) << setw(5) << basePrice << " Cr  "
-             << "Runs: " << setw(5) << runs
-             << "  SR: " << setw(6) << strikeRate
-             << "  100s: " << centuries;
+        cout << id << "\t" << name << "\t" << role << "\tBase: Rs. " << basePrice 
+             << " Cr\tRuns: " << runs << "\tSR: " << strikeRate << "\t100s: " << centuries;
     }
 
     double calculateRating() const override {
@@ -142,12 +97,8 @@ public:
     }
 
     void displayDetails() const override {
-        cout << left << setw(4) << id
-             << setw(18) << name
-             << setw(15) << role
-             << "Rs. " << fixed << setprecision(2) << setw(5) << basePrice << " Cr  "
-             << "Wkts: " << setw(5) << wickets
-             << "  Eco: " << setw(6) << economy;
+        cout << id << "\t" << name << "\t" << role << "\tBase: Rs. " << basePrice 
+             << " Cr\tWickets: " << wickets << "\tEco: " << economy;
     }
 
     double calculateRating() const override {
@@ -173,13 +124,8 @@ public:
     }
 
     void displayDetails() const override {
-        cout << left << setw(4) << id
-             << setw(18) << name
-             << setw(15) << role
-             << "Rs. " << fixed << setprecision(2) << setw(5) << basePrice << " Cr  "
-             << "Runs: " << setw(5) << runs
-             << "  Wkts: " << setw(3) << wickets
-             << "  SR: " << strikeRate;
+        cout << id << "\t" << name << "\t" << role << "\tBase: Rs. " << basePrice 
+             << " Cr\tRuns: " << runs << "\tWkts: " << wickets << "\tSR: " << strikeRate;
     }
 
     double calculateRating() const override {
@@ -201,12 +147,8 @@ public:
     }
 
     void displayDetails() const override {
-        cout << left << setw(4) << id
-             << setw(18) << name
-             << setw(15) << role
-             << "Rs. " << fixed << setprecision(2) << setw(5) << basePrice << " Cr  "
-             << "Runs: " << setw(5) << runs
-             << "  Dismissals: " << dismissals;
+        cout << id << "\t" << name << "\t" << role << "\tBase: Rs. " << basePrice 
+             << " Cr\tRuns: " << runs << "\tDismissals: " << dismissals;
     }
 
     double calculateRating() const override {
@@ -214,17 +156,15 @@ public:
     }
 };
 
-// =====================================================================================
-// 3. OOPS CONCEPT: ENCAPSULATION & AGGREGATION ('Team' Class)
-// =====================================================================================
+// Team Class (Encapsulation and Aggregation)
 class Team {
 private:
     int id;
     string name;
     string mascot;
-    double totalBudget;     // Rs. 100.0 Cr
-    double remainingBudget; // Purse left
-    vector<Player*> squad;  // Aggregation: Team has a squad of Players
+    double totalBudget;
+    double remainingBudget;
+    vector<Player*> squad;
 
 public:
     Team(int tId, string tName, string tMascot, double budget = 100.0) {
@@ -235,7 +175,6 @@ public:
         remainingBudget = budget;
     }
 
-    // Getters
     int getId() const { return id; }
     string getName() const { return name; }
     string getMascot() const { return mascot; }
@@ -260,39 +199,32 @@ public:
     }
 
     void displaySquad() const {
-        cout << "\n==============================================================================\n";
-        cout << " [Franchise] " << name << " (" << mascot << ")\n";
-        cout << " Remaining Purse: Rs. " << fixed << setprecision(2) << remainingBudget << " Cr / Rs. " << totalBudget << " Cr\n";
-        cout << " Total Players: " << squad.size() << "\n";
-        cout << "------------------------------------------------------------------------------\n";
+        cout << "\nTeam: " << name << " (" << mascot << ")\n";
+        cout << "Remaining Budget: Rs. " << remainingBudget << " Cr / Rs. " << totalBudget << " Cr\n";
+        cout << "Total Players: " << squad.size() << "\n";
 
         if (squad.empty()) {
-            cout << " (Squad is currently empty. Buy players in auction!)\n";
+            cout << "Squad is empty.\n";
             return;
         }
 
         int bats = 0, bowls = 0, ar = 0, wk = 0;
         for (size_t i = 0; i < squad.size(); i++) {
-            cout << " - ";
+            cout << "- ";
             squad[i]->displayDetails();
-            cout << " | Sold: Rs. " << fixed << setprecision(2) << squad[i]->getSoldPrice() << " Cr\n";
+            cout << " | Bought for: Rs. " << squad[i]->getSoldPrice() << " Cr\n";
 
             if (squad[i]->getRole() == "Batsman") bats++;
             else if (squad[i]->getRole() == "Bowler") bowls++;
             else if (squad[i]->getRole() == "All-Rounder") ar++;
             else if (squad[i]->getRole() == "Wicket-Keeper") wk++;
         }
-        cout << "------------------------------------------------------------------------------\n";
-        cout << " Squad Composition: [Batsmen: " << bats << " | Bowlers: " << bowls
-             << " | All-Rounders: " << ar << " | Wicket-Keepers: " << wk << "]\n";
-        cout << "==============================================================================\n";
+        cout << "Role Counts: Batsmen: " << bats << ", Bowlers: " << bowls
+             << ", All-Rounders: " << ar << ", Wicket-Keepers: " << wk << "\n";
     }
 };
 
-// =====================================================================================
-// 4. OOPS CONCEPT: FUNCTION OVERLOADING
-// =====================================================================================
-// Overload 1: Find player by ID
+// Function Overloading (Polymorphism)
 Player* findPlayer(const vector<Player*>& pool, int id) {
     for (size_t i = 0; i < pool.size(); i++) {
         if (pool[i]->getId() == id) return pool[i];
@@ -300,7 +232,6 @@ Player* findPlayer(const vector<Player*>& pool, int id) {
     return nullptr;
 }
 
-// Overload 2: Find player by Name
 Player* findPlayer(const vector<Player*>& pool, string name) {
     for (size_t i = 0; i < pool.size(); i++) {
         if (pool[i]->getName() == name) return pool[i];
@@ -308,9 +239,7 @@ Player* findPlayer(const vector<Player*>& pool, string name) {
     return nullptr;
 }
 
-// =====================================================================================
-// 5. AUCTION SYSTEM MODULE
-// =====================================================================================
+// Auction System Class
 class AuctionSystem {
 private:
     vector<Player*>& playerPool;
@@ -320,7 +249,6 @@ public:
     AuctionSystem(vector<Player*>& pool, vector<Team>& tList)
         : playerPool(pool), teams(tList) {}
 
-    // Find the next unsold player in the pool
     Player* getNextUnsoldPlayer() {
         for (size_t i = 0; i < playerPool.size(); i++) {
             if (!playerPool[i]->getIsSold()) return playerPool[i];
@@ -328,24 +256,22 @@ public:
         return nullptr;
     }
 
-    // Conduct bidding round for a player
     void auctionPlayer(Player* p) {
         if (p == nullptr) {
-            cout << "\n[!] No unsold player found in the pool!\n";
+            cout << "\nNo unsold players left in the pool.\n";
             return;
         }
 
-        cout << "\n------------------------------------------------------------------------------\n";
-        cout << " >>> UP FOR BIDDING: ";
+        cout << "\n--- Player Up For Auction ---\n";
         p->displayDetails();
-        cout << "\n------------------------------------------------------------------------------\n";
+        cout << "\n";
 
         double currentBid = p->getBasePrice();
-        int highestBidderIndex = -1; // -1 means no team has placed a bid yet
+        int highestBidderIndex = -1;
 
         int choice = -1;
         while (choice != 0) {
-            cout << "\nCurrent Highest Bid: Rs. " << fixed << setprecision(2) << currentBid << " Cr";
+            cout << "\nCurrent Highest Bid: Rs. " << currentBid << " Cr";
             if (highestBidderIndex != -1) {
                 cout << " by " << teams[highestBidderIndex].getName();
             } else {
@@ -353,12 +279,12 @@ public:
             }
             cout << "\n";
 
-            cout << "Select Franchise to place/raise bid (+Rs. 0.25 Cr):\n";
+            cout << "Choose a team to raise bid (+Rs. 0.25 Cr):\n";
             for (size_t i = 0; i < teams.size(); i++) {
-                cout << "  " << (i + 1) << ". " << teams[i].getName()
-                     << " (Purse: Rs. " << teams[i].getRemainingBudget() << " Cr)\n";
+                cout << (i + 1) << ". " << teams[i].getName() 
+                     << " (Budget: Rs. " << teams[i].getRemainingBudget() << " Cr)\n";
             }
-            cout << "  0. Sell to current highest bidder / Pass\n";
+            cout << "0. Sell to current highest bidder / Pass\n";
             cout << "Enter choice: ";
             cin >> choice;
 
@@ -369,58 +295,53 @@ public:
                 if (teams[teamIdx].canAfford(nextBid)) {
                     currentBid = nextBid;
                     highestBidderIndex = teamIdx;
-                    cout << ">> " << teams[teamIdx].getName() << " placed bid of Rs. " << currentBid << " Cr!\n";
+                    cout << teams[teamIdx].getName() << " bid Rs. " << currentBid << " Cr!\n";
                 } else {
-                    cout << "[X] Insufficient funds in " << teams[teamIdx].getName() << "'s purse!\n";
+                    cout << "Not enough budget in " << teams[teamIdx].getName() << "!\n";
                 }
             } else if (choice != 0) {
-                cout << "[!] Invalid choice!\n";
+                cout << "Invalid choice!\n";
             }
         }
 
-        // Finalize Outcome
         if (highestBidderIndex != -1) {
             Team& winner = teams[highestBidderIndex];
             winner.deductBudget(currentBid);
             p->assignToTeam(winner.getName(), currentBid);
             winner.addPlayer(p);
-            cout << "\n🔨 SOLD! " << p->getName() << " is SOLD to "
-                 << winner.getName() << " for Rs. " << fixed << setprecision(2) << currentBid << " Cr!\n";
+            cout << "\nSOLD: " << p->getName() << " sold to " 
+                 << winner.getName() << " for Rs. " << currentBid << " Cr!\n";
         } else {
-            cout << "\n❌ UNSOLD! No franchise placed a bid for " << p->getName() << ".\n";
+            cout << "\nUNSOLD: No bids for " << p->getName() << ".\n";
         }
     }
 };
 
-// =====================================================================================
-// 6. DATA INITIALIZATION & CLEANUP
-// =====================================================================================
 void seedInitialData(vector<Player*>& pool, vector<Team>& teams) {
-    // 4 Animal Franchises with Rs. 100.0 Cr budget each
     teams.push_back(Team(1, "Roaring Lions", "Lion", 100.0));
     teams.push_back(Team(2, "Fierce Tigers", "Tiger", 100.0));
     teams.push_back(Team(3, "Mighty Elephants", "Elephant", 100.0));
     teams.push_back(Team(4, "Swift Falcons", "Falcon", 100.0));
 
-    // Batsmen (id, name, basePrice, runs, strikeRate, 100s)
+    // Batsmen
     pool.push_back(new Batsman(101, "Aarav Stone", 2.0, 3850, 142.5, 4));
     pool.push_back(new Batsman(102, "Leo Vance", 1.5, 2900, 135.2, 2));
     pool.push_back(new Batsman(103, "Maya Sterling", 2.0, 3400, 139.8, 3));
     pool.push_back(new Batsman(104, "Rohan Ray", 1.0, 2150, 128.6, 1));
 
-    // Bowlers (id, name, basePrice, wickets, economy)
+    // Bowlers
     pool.push_back(new Bowler(201, "Shadow Bolt", 2.0, 95, 7.15));
     pool.push_back(new Bowler(202, "Spike Archer", 1.5, 82, 7.60));
     pool.push_back(new Bowler(203, "Tornado Thorne", 1.5, 88, 7.40));
     pool.push_back(new Bowler(204, "Axel Swift", 1.0, 64, 8.10));
 
-    // All-Rounders (id, name, basePrice, runs, wickets, strikeRate, economy)
+    // All-Rounders
     pool.push_back(new AllRounder(301, "Blaze Rivera", 2.0, 2400, 68, 141.0, 7.80));
     pool.push_back(new AllRounder(302, "Hunter Cross", 1.5, 1850, 52, 133.5, 8.20));
     pool.push_back(new AllRounder(303, "Phoenix Drake", 2.0, 2600, 74, 144.2, 7.50));
     pool.push_back(new AllRounder(304, "Zenith Cole", 1.0, 1400, 40, 126.0, 8.50));
 
-    // Wicket-Keepers (id, name, basePrice, runs, dismissals)
+    // Wicket-Keepers
     pool.push_back(new WicketKeeper(401, "Dexter Fox", 1.5, 2750, 56));
     pool.push_back(new WicketKeeper(402, "Orion Peak", 1.5, 2400, 48));
     pool.push_back(new WicketKeeper(403, "Jasper Reed", 1.0, 1950, 39));
@@ -434,48 +355,34 @@ void cleanUpMemory(vector<Player*>& pool) {
     pool.clear();
 }
 
-// =====================================================================================
-// 7. MAIN INTERACTIVE CONSOLE INTERFACE
-// =====================================================================================
 int main() {
     vector<Player*> playerPool;
     vector<Team> teams;
 
-    // Seed sample players and animal franchises
     seedInitialData(playerPool, teams);
-
     AuctionSystem auction(playerPool, teams);
 
     int choice = -1;
     while (choice != 0) {
-        cout << "\n==============================================================================\n";
-        cout << "             SPORTS PLAYER AUCTION MANAGEMENT SYSTEM                          \n";
-        cout << "==============================================================================\n";
-        cout << " 1. View Registered Player Pool\n";
-        cout << " 2. View Franchise Details & Remaining Budgets\n";
-        cout << " 3. Search Player by ID or Name\n";
-        cout << " 4. Conduct Auction for Next Unsold Player\n";
-        cout << " 5. View Team Squads & Role Composition\n";
-        cout << " 0. Exit System\n";
-        cout << "==============================================================================\n";
-        cout << " Enter your choice (0-5): ";
+        cout << "\n--- Player Auction Management System ---\n";
+        cout << "1. View Registered Player Pool\n";
+        cout << "2. View Teams and Budgets\n";
+        cout << "3. Search Player by ID or Name\n";
+        cout << "4. Auction Next Unsold Player\n";
+        cout << "5. View Team Squads\n";
+        cout << "0. Exit\n";
+        cout << "Enter your choice: ";
         cin >> choice;
 
         switch (choice) {
             case 1: {
-                cout << "\n--- REGISTERED PLAYER AUCTION POOL ---\n";
-                cout << left << setw(4) << "ID"
-                     << setw(18) << "Name"
-                     << setw(15) << "Role"
-                     << setw(14) << "Base Price"
-                     << "Stats & Details\n";
-                cout << "------------------------------------------------------------------------------\n";
+                cout << "\n--- Registered Players ---\n";
                 for (size_t i = 0; i < playerPool.size(); i++) {
                     playerPool[i]->displayDetails();
                     if (playerPool[i]->getIsSold()) {
-                        cout << " | [SOLD: " << playerPool[i]->getTeamName() << " @ Rs. " << playerPool[i]->getSoldPrice() << " Cr]";
+                        cout << " | [Sold to: " << playerPool[i]->getTeamName() << " for Rs. " << playerPool[i]->getSoldPrice() << " Cr]";
                     } else {
-                        cout << " | [AVAILABLE]";
+                        cout << " | [Available]";
                     }
                     cout << "\n";
                 }
@@ -483,12 +390,11 @@ int main() {
             }
 
             case 2: {
-                cout << "\n--- FRANCHISE STATUS & PURSES ---\n";
+                cout << "\n--- Teams and Budgets ---\n";
                 for (size_t i = 0; i < teams.size(); i++) {
-                    cout << "* " << left << setw(18) << teams[i].getName()
-                         << " (" << teams[i].getMascot() << ")"
-                         << " | Purse: Rs. " << fixed << setprecision(2) << setw(6) << teams[i].getRemainingBudget() << " Cr"
-                         << " | Squad Size: " << teams[i].getSquadSize() << " players\n";
+                    cout << teams[i].getName() << " (" << teams[i].getMascot() << ")"
+                         << " | Budget Left: Rs. " << teams[i].getRemainingBudget() << " Cr"
+                         << " | Players: " << teams[i].getSquadSize() << "\n";
                 }
                 break;
             }
@@ -503,14 +409,14 @@ int main() {
                     cin >> pId;
                     Player* p = findPlayer(playerPool, pId);
                     if (p != nullptr) {
-                        cout << "\n[✓] Found Player:\n";
+                        cout << "\nPlayer Found:\n";
                         p->displayDetails();
                         cout << "\nStatus: " << (p->getIsSold() ? ("Sold to " + p->getTeamName()) : "Available") << "\n";
                     } else {
-                        cout << "[X] No player found with ID " << pId << "!\n";
+                        cout << "No player found with ID " << pId << "!\n";
                     }
                 } else if (subChoice == 2) {
-                    cout << "Enter Player First Name (e.g. Aarav, Shadow, Blaze, Dexter): ";
+                    cout << "Enter Player First Name: ";
                     string pName;
                     cin >> pName;
                     Player* found = nullptr;
@@ -521,14 +427,14 @@ int main() {
                         }
                     }
                     if (found != nullptr) {
-                        cout << "\n[✓] Found Player:\n";
+                        cout << "\nPlayer Found:\n";
                         found->displayDetails();
                         cout << "\nStatus: " << (found->getIsSold() ? ("Sold to " + found->getTeamName()) : "Available") << "\n";
                     } else {
-                        cout << "[X] No player found with Name '" << pName << "'!\n";
+                        cout << "No player found with Name: " << pName << "!\n";
                     }
                 } else {
-                    cout << "[!] Invalid search choice.\n";
+                    cout << "Invalid choice.\n";
                 }
                 break;
             }
@@ -538,7 +444,7 @@ int main() {
                 if (nextPlayer != nullptr) {
                     auction.auctionPlayer(nextPlayer);
                 } else {
-                    cout << "\n[✓] All players in the auction pool are already SOLD!\n";
+                    cout << "\nAll players in the pool are already sold!\n";
                 }
                 break;
             }
@@ -551,18 +457,17 @@ int main() {
             }
 
             case 0: {
-                cout << "\nExiting IPL Auction Management System. Goodbye!\n";
+                cout << "\nExiting Auction System. Goodbye!\n";
                 break;
             }
 
             default: {
-                cout << "\n[!] Invalid choice! Please select an option between 0 and 5.\n";
+                cout << "Invalid choice! Please select 0 to 5.\n";
                 break;
             }
         }
     }
 
     cleanUpMemory(playerPool);
-
     return 0;
 }
