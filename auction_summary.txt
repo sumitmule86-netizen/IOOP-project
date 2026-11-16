@@ -1,0 +1,42 @@
+==============================================================================
+              IPL-STYLE CRICKET AUCTION SUMMARY REPORT                        
+==============================================================================
+
+Franchise: Roaring Lions (Lion)
+Remaining Purse: Rs. 96.00 Cr
+Players Bought (2):
+  - Leo Vance            | Batsman         | Rs. 2.50 Cr
+  - Milo Finch           | Wicket-Keeper   | Rs. 1.50 Cr
+------------------------------------------------------------------------------
+
+Franchise: Fierce Tigers (Tiger)
+Remaining Purse: Rs. 85.50 Cr
+Players Bought (5):
+  - Rohan Ray            | Batsman         | Rs. 3.00 Cr
+  - Shadow Bolt          | Bowler          | Rs. 3.50 Cr
+  - Tornado Thorne       | Bowler          | Rs. 3.00 Cr
+  - Blaze Rivera         | All-Rounder     | Rs. 2.50 Cr
+  - Hunter Cross         | All-Rounder     | Rs. 2.50 Cr
+------------------------------------------------------------------------------
+
+Franchise: Mighty Elephants (Elephant)
+Remaining Purse: Rs. 84.50 Cr
+Players Bought (5):
+  - Aarav Stone          | Batsman         | Rs. 2.50 Cr
+  - Maya Sterling        | Batsman         | Rs. 4.00 Cr
+  - Phoenix Drake        | All-Rounder     | Rs. 3.50 Cr
+  - Zenith Cole          | All-Rounder     | Rs. 2.00 Cr
+  - Orion Peak           | Wicket-Keeper   | Rs. 3.50 Cr
+------------------------------------------------------------------------------
+
+Franchise: Swift Falcons (Falcon)
+Remaining Purse: Rs. 90.00 Cr
+Players Bought (4):
+  - Spike Archer         | Bowler          | Rs. 2.50 Cr
+  - Axel Swift           | Bowler          | Rs. 2.50 Cr
+  - Dexter Fox           | Wicket-Keeper   | Rs. 2.00 Cr
+  - Jasper Reed          | Wicket-Keeper   | Rs. 3.00 Cr
+------------------------------------------------------------------------------
+
+UNSOLD PLAYERS:
+  (None. All players were sold!)
